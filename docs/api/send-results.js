@@ -4,7 +4,7 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 // Optionnel : verrouiller le destinataire côté serveur
-const TO_EMAIL = process.env.TO_EMAIL || 'exemple@gmail.com';
+const TO_EMAIL = process.env.TO_EMAIL || 'roxandmat83@gmail.com';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
     const r = await resend.emails.send({
       from: 'Diagnostic <no-reply@your-domain.tld>', // un domaine vérifié Resend
-      to: [TO_EMAIL],
+      to: "roxandmat83@gmail.com",
       subject,
       text,
       html: html || `<pre>${escapeHtml(text)}</pre>`,

@@ -603,7 +603,35 @@
       a.href = url; a.download = 'diagnostic_maturite.json'; a.click();
       URL.revokeObjectURL(url);
     }
+    
 
+    async function sendResults(payload){
+      // transforme ton objet payload en texte lisible
+      const text = [
+        `Entreprise: ${document.getElementById('company')?.value || ''}`,
+        `Score global: ${payload.global}%`,
+        `Niveau: ${payload.level}`,
+        `Scores: ${payload.catScores.map(c => c.label+': '+c.pct+'%').join(', ')}`,
+        `Recommandations: ${(payload.reco||[]).join(' | ')}`,
+        `Horodatage: ${new Date().toLocaleString()}`
+      ].join('\n');
+
+      const res = await fetch("https://formspree.io/f/xwprzeyw", { // <-- ton URL Formspree
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ message: text }) // champ libre "message"
+      });
+
+      // Optionnel: mini feedback utilisateur
+      alert(res.ok ? "✅ Réponses envoyées" : "❌ Envoi impossible");
+    }
+
+    // hook: déclencher l’envoi automatiquement quand le résultat est affiché
+    const __origShowResult = showResult;
+    showResult = function(payload){
+      __origShowResult(payload);
+      sendResults(payload);
+    };
     // Quick demo fill
     function quickFill(){
       const pattern = [2,1, 2,1, 2,2, 1,2, 1,1, 2,2];
