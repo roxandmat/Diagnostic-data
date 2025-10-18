@@ -606,32 +606,62 @@
     
 
     async function sendResults(payload){
-      // transforme ton objet payload en texte lisible
-      const text = [
-        `Entreprise: ${document.getElementById('company')?.value || ''}`,
-        `Score global: ${payload.global}%`,
-        `Niveau: ${payload.level}`,
-        `Scores: ${payload.catScores.map(c => c.label+': '+c.pct+'%').join(', ')}`,
-        `Recommandations: ${(payload.reco||[]).join(' | ')}`,
-        `Horodatage: ${new Date().toLocaleString()}`
-      ].join('\n');
+      try{
+        // méta utiles pour l'email
+        const meta = {
+          company: document.getElementById('company')?.value?.trim() || '',
+          sector:  document.getElementById('sector')?.value?.trim() || '',
+          email:   document.getElementById('email')?.value?.trim() || '' // facultatif dans ton UI
+        };
 
-      const res = await fetch("https://formspree.io/f/xwprzeyw", { // <-- ton URL Formspree
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ message: text }) // champ libre "message"
-      });
+        const text = [
+          `Entreprise: ${meta.company}`,
+          meta.sector ? `Secteur: ${meta.sector}` : '',
+          meta.email ? `Contact: ${meta.email}` : '',
+          `Score global: ${payload.global}%`,
+          `Niveau: ${payload.level}`,
+          `Scores: ${payload.catScores.map(c => c.label+': '+c.pct+'%').join(', ')}`,
+          `Recommandations: ${(payload.reco||[]).join(' | ')}`,
+          `Horodatage: ${new Date().toLocaleString()}`
+        ].filter(Boolean).join('\n');
 
-      // Optionnel: mini feedback utilisateur
-      alert(res.ok ? "✅ Réponses envoyées" : "❌ Envoi impossible");
+        const body = {
+          // Ces champs aident Formspree à router et afficher proprement
+          email: meta.email || 'no-reply@github.io',
+          company: meta.company,
+          message: text,
+          _subject: `Réponses diagnostic — ${meta.company || 'Entreprise'} — ${payload.global}% (${payload.level})`
+        };
+
+        const res = await fetch("https://formspree.io/f/xwprzeyw", {
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json",
+            "Accept":"application/json"
+          },
+          body: JSON.stringify(body)
+        });
+
+        // Débogage / feedback
+        const data = await res.json().catch(()=> ({}));
+        if(!res.ok){
+          console.warn('Formspree error:', res.status, data);
+          alert("❌ Envoi impossible (Formspree). Consulte la console pour le détail.");
+          return;
+        }
+
+        // Formspree renvoie { ok: true } si tout va bien
+        if(data?.ok){
+          alert("✅ Réponses envoyées");
+        }else{
+          console.warn('Formspree response:', data);
+          alert("ℹ️ Soumission reçue. Vérifie l’activation Formspree (email de confirmation).");
+        }
+      }catch(err){
+        console.error('sendResults error:', err);
+        alert("❌ Envoi impossible (erreur réseau).");
+      }
     }
-
-    // hook: déclencher l’envoi automatiquement quand le résultat est affiché
-    const __origShowResult = showResult;
-    showResult = function(payload){
-      __origShowResult(payload);
-      sendResults(payload);
-    };
     // Quick demo fill
     function quickFill(){
       const pattern = [2,1, 2,1, 2,2, 1,2, 1,1, 2,2];
