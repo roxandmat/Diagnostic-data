@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Diagnostic de maturité — Industrie</title>
+  <title>Diagnostic de maturité — Predicta</title>
   <meta name="description" content="Questionnaire rapide pour évaluer la maturité numérique et IA d'une entreprise industrielle (N1 à N4) et obtenir des recommandations concrètes." />
   <style>
     :root{
@@ -205,7 +205,7 @@
 <body>
   <!-- Topbar -->
   <div class="topbar">
-    <div class="brand"><div class="logo" aria-hidden="true"></div> Diagnostic Industrie</div>
+    <div class="brand"><div class="logo" aria-hidden="true"></div> Diagnostic Predicta</div>
   </div>
 
   <!-- Section sombre (Hero) -->
@@ -213,7 +213,7 @@
     <header class="hero container">
       <div class="eyebrow muted">Évaluation express</div>
       <h1>Diagnostic de maturité<br>numérique&nbsp;&amp;&nbsp;IA — Industrie</h1>
-      <p class="sub">Mesurez votre niveau (N1 → N4) et repartez avec des actions claires et priorisées.</p>
+      <p class="sub">Mesurez votre niveau (N1 → N4) et repartez avec des recommandations claires et priorisées.</p>
       <div class="hero-cta">
         <span class="pill">⏱️ 5&nbsp;min</span>
         <span class="pill">🧪 POC → Produit</span>
@@ -272,7 +272,7 @@
             <div id="questions" style="margin-top:6px;display:grid;gap:12px"></div>
             <div class="spacer-m"></div>
             <div class="actions">
-              <button class="cta" id="compute">Calculer mon niveau</button>
+              <button class="cta" id="compute">Calculer mon niveau et envoyer mes réponses</button>
               <button class="ghost" id="reset">Réinitialiser</button>
               <button class="ghost" id="export">Exporter le résultat (JSON)</button>
               <button class="ghost" id="print">Imprimer / PDF</button>
@@ -292,7 +292,7 @@
             <div style="margin-top:16px">
               <h3 style="margin:0 0 8px">Recommandations prioritaires</h3>
               <ol id="reco" style="margin:0 0 8px 18px;line-height:1.6"></ol>
-              <small class="muted">Ces actions sont générées en fonction de vos réponses.</small>
+              <small class="muted">Ces recommandations sont générées en fonction de vos réponses.</small>
             </div>
           </aside>
         </div>
@@ -414,16 +414,16 @@
     ];
 
     const QUESTIONS = [
-      { cat:'gov', text:"Une feuille de route ‘industrie du futur’ est formalisée (objectifs, KPI, budget)." },
+      { cat:'gov', text:"Une feuille de route de mise en place de maintenance prédictive assistée par IA est formalisée (objectifs, KPI, budget)." },
       { cat:'gov', text:"La direction sponsorise activement les projets digitaux/IA." },
-      { cat:'it', text:"Nous disposons d'un réseau stable (LAN industriel) et d'une politique de sauvegarde." },
+      { cat:'it', text:"Nous disposons d'un réseau stable (LAN industriel) et d'une politique de sauvegarde des données." },
       { cat:'it', text:"Les données de production sont historisées et consultables (MES/SCADA/DB)." },
       { cat:'prod', text:"Les postes de production sont instrumentés (capteurs, PLC) et interfaçables (API/OPC/MQTT)." },
-      { cat:'prod', text:"Les changements de série (changeover) sont standardisés et documentés." },
-      { cat:'qual', text:"Un contrôle qualité automatisé (caméra ou capteurs) est déjà en place sur la ligne." },
-      { cat:'qual', text:"Des indicateurs taux NOK / scrap / retouches sont suivis et partagés." },
+      { cat:'prod', text:"Les changements de série (changeover) et pannes/défauts sont standardisés et documentés." },
+      { cat:'qual', text:"Un contrôle qualité automatisé (caméra ou capteurs) est déjà en place sur les lignes de production." },
+      { cat:'qual', text:"Des indicateurs qualités sont mis en place, suivis et partagés." },
       { cat:'ml', text:"Nous avons des cas d’usage IA (vision, détection défaut, optimisation) en production ou pilote." },
-      { cat:'ml', text:"Un processus d'amélioration continue des modèles (ré-entraînement) existe." },
+      { cat:'ml', text:"Si oui, un processus d'amélioration continue des modèles (ré-entraînement) existe." },
       { cat:'org', text:"Les opérateurs sont formés aux outils digitaux, avec procédures simples (SOP)." },
       { cat:'org', text:"Un référent interne (qualité/automatisme/IT) pilote les projets digitaux." }
     ];
