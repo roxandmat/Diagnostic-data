@@ -623,9 +623,23 @@
         email:   document.getElementById('email')?.value?.trim() || '',
         consent: !!document.getElementById('send_copy')?.checked
       };
-      const body = { secret: SHARED_SECRET, meta, result: {
-        global: payload.global, level: payload.level,
-        catScores: payload.catScores, reco: payload.reco
+      const details = QUESTIONS.map((q, i)=>({
+        index: i+1,
+        question: q.text,
+        note: answers[i],
+        comment: comments[i] || ''
+      }));
+
+      const body = {
+        secret: SHARED_SECRET,
+        meta,
+        result: {
+          global: payload.global,
+          level: payload.level,
+          catScores: payload.catScores,
+          reco: payload.reco,
+          details // <-- commentaires et notes par question
+        
       }};
 
       try{
