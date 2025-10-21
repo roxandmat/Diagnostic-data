@@ -324,11 +324,10 @@
   </footer>
 
   <script>
-    /* ==== Scroll helpers ==== */
+    /* ============ Utils UI ============ */
     function scrollToTop(force=false){
       const el = document.scrollingElement || document.documentElement || document.body;
       try{ el.scrollTo({top:0, behavior: force ? 'auto' : 'smooth'}); }catch(_){ el.scrollTop = 0; }
-      document.documentElement.scrollTop = 0; document.body.scrollTop = 0;
     }
     function scrollToField(el){
       if(!el) return;
@@ -336,11 +335,10 @@
       el.focus({preventScroll:true});
     }
 
-    /* ==== Reveal ==== */
+    /* Reveal (optionnel) */
     const io = new IntersectionObserver((es)=>es.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); }), {threshold:.1});
-    document.querySelectorAll('.reveal').forEach(n=>io.observe(n));
 
-    /* ==== Validation identité ==== */
+    /* ============ Validation identité ============ */
     const companyEl = document.getElementById('company');
     const emailEl   = document.getElementById('email');
     const companyField = document.getElementById('companyField');
@@ -353,41 +351,34 @@
       const re = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
       return re.test(v.trim());
     }
-
     function clearErrors(){
       [companyField, emailField].forEach(f=>f.classList.remove('error'));
-      companyEl.setAttribute('aria-invalid','false');
-      emailEl.setAttribute('aria-invalid','false');
-      companyError.textContent = '';
-      emailError.textContent = '';
+      companyEl?.setAttribute('aria-invalid','false');
+      emailEl?.setAttribute('aria-invalid','false');
+      if (companyError) companyError.textContent = '';
+      if (emailError) emailError.textContent = '';
     }
-
     function validateIdentity(){
       clearErrors();
       let ok = true;
-
       if(!companyEl.value.trim()){
         ok = false;
         companyField.classList.add('error');
         companyEl.setAttribute('aria-invalid','true');
         companyError.textContent = "Le nom de l'entreprise est requis.";
       }
-
       if(!isValidEmail(emailEl.value)){
         ok = false;
         emailField.classList.add('error');
         emailEl.setAttribute('aria-invalid','true');
         emailError.textContent = "Format d'email invalide (ex. nom@entreprise.fr).";
       }
-
       if(!ok){
         const firstError = document.querySelector('.error .input');
         scrollToField(firstError);
       }
       return ok;
     }
-
-    // Efface l'erreur en live
     [companyEl, emailEl].forEach(inp=>{
       inp.addEventListener('input', ()=> {
         if(inp === companyEl && companyEl.value.trim()){
@@ -403,29 +394,29 @@
       });
     });
 
-    /* ==== Modèle ==== */
+    /* ============ Modèle ============ */
     const CATEGORIES = [
-      { key:'gov', label:'Vision & Gouvernance', weight:1 },
-      { key:'it', label:'Données & IT', weight:1 },
-      { key:'prod', label:'Production & Automatisation', weight:1 },
-      { key:'qual', label:'Qualité & Vision', weight:1 },
-      { key:'ml', label:'IA & Analytics', weight:1 },
-      { key:'org', label:'Organisation & Compétences', weight:1 }
+      { key:'gov',  label:'Vision & Gouvernance',            weight:1 },
+      { key:'it',   label:'Données & IT',                    weight:1 },
+      { key:'prod', label:'Production & Automatisation',     weight:1 },
+      { key:'qual', label:'Qualité & Vision',                weight:1 },
+      { key:'ml',   label:'IA & Analytics',                  weight:1 },
+      { key:'org',  label:'Organisation & Compétences',      weight:1 }
     ];
 
     const QUESTIONS = [
-      { cat:'gov', text:"Une feuille de route d'implémentation de maintenance prédictive assistée par IA est formalisée (objectifs, KPI, budget)." },
-      { cat:'gov', text:"La direction sponsorise activement les projets digitaux/IA." },
-      { cat:'it', text:"Nous disposons d'un réseau stable (LAN industriel) et d'une politique de sauvegarde des données." },
-      { cat:'it', text:"Les données de production sont historisées et consultables (MES/SCADA/DB)." },
+      { cat:'gov',  text:"Une feuille de route d'implémentation de maintenance prédictive assistée par IA est formalisée (objectifs, KPI, budget)." },
+      { cat:'gov',  text:"La direction sponsorise activement les projets digitaux/IA." },
+      { cat:'it',   text:"Nous disposons d'un réseau stable (LAN industriel) et d'une politique de sauvegarde des données." },
+      { cat:'it',   text:"Les données de production sont historisées et consultables (MES/SCADA/DB)." },
       { cat:'prod', text:"Les postes de production sont instrumentés (capteurs, PLC) et interfaçables (API/OPC/MQTT)." },
       { cat:'prod', text:"Les changements de série (changeover) et pannes/défauts sont standardisés et documentés." },
       { cat:'qual', text:"Un contrôle qualité automatisé (caméra ou capteurs) est déjà en place sur les lignes de production." },
       { cat:'qual', text:"Des indicateurs qualités sont mis en place, suivis et partagés." },
-      { cat:'ml', text:"Nous avons des cas d’usage IA (vision, détection défaut, optimisation) en production ou pilote." },
-      { cat:'ml', text:"Si oui, un processus d'amélioration continue des modèles (ré-entraînement) existe." },
-      { cat:'org', text:"Les opérateurs sont formés aux outils digitaux, avec procédures simples (SOP)." },
-      { cat:'org', text:"Un référent interne (qualité/automatisme/IT) pilote les projets digitaux." }
+      { cat:'ml',   text:"Nous avons des cas d’usage IA (vision, détection défaut, optimisation) en production ou pilote." },
+      { cat:'ml',   text:"Si oui, un processus d'amélioration continue des modèles (ré-entraînement) existe." },
+      { cat:'org',  text:"Les opérateurs sont formés aux outils digitaux, avec procédures simples (SOP)." },
+      { cat:'org',  text:"Un référent interne (qualité/automatisme/IT) pilote les projets digitaux." }
     ];
 
     const SCALE = [
@@ -435,42 +426,52 @@
       { v:3, label:'3 — Complètement' }
     ];
 
-    const qEl = document.getElementById('questions');
-
-    // Render questions
-    QUESTIONS.forEach((q, idx)=>{
-      const el = document.createElement('div');
-      el.className = 'q';
-      el.innerHTML = `
-        <h3>Q${idx+1}. ${q.text}</h3>
-        <div class="scale" role="group" aria-label="Échelle de maturité">
-          ${SCALE.map(s=>`<button class='btn' data-q='${idx}' data-v='${s.v}' aria-pressed='false' title='${s.label}'>${s.v}</button>`).join('')}
-        </div>
-        <small>${SCALE.map(s=>s.label).join(' · ')}</small>
-      `;
-      qEl.appendChild(el);
-    });
-
+    /* ============ Rendu des questions ============ */
     const answers = Array(QUESTIONS.length).fill(null);
 
-    // Interactions boutons échelle
-    qEl.addEventListener('click', (e)=>{
-      const b = e.target.closest('button.btn');
-      if(!b) return;
-      const id = +b.dataset.q, val = +b.dataset.v;
-      answers[id] = val;
-      b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
-      b.setAttribute('aria-pressed','true');
-      updateProgress();
-    });
+    function renderQuestions(){
+      const qEl = document.getElementById('questions');
+      if(!qEl){
+        console.error('⚠️ Élément #questions introuvable — vérifie ton HTML.');
+        return;
+      }
+      qEl.innerHTML = '';
+      QUESTIONS.forEach((q, idx)=>{
+        const el = document.createElement('div');
+        el.className = 'q';
+        el.innerHTML = `
+          <h3>Q${idx+1}. ${q.text}</h3>
+          <div class="scale" role="group" aria-label="Échelle de maturité">
+            ${SCALE.map(s=>`<button class="btn" data-q="${idx}" data-v="${s.v}" aria-pressed="false" title="${s.label}">${s.v}</button>`).join('')}
+          </div>
+          <small>${SCALE.map(s=>s.label).join(' · ')}</small>
+        `;
+        qEl.appendChild(el);
+      });
+
+      // (ré)attache l’observer reveal si besoin
+      document.querySelectorAll('.reveal').forEach(n=>io.observe(n));
+
+      // interactions
+      qEl.addEventListener('click', (e)=>{
+        const b = e.target.closest('button.btn');
+        if(!b) return;
+        const id = +b.dataset.q, val = +b.dataset.v;
+        answers[id] = val;
+        b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
+        b.setAttribute('aria-pressed','true');
+        updateProgress();
+      });
+    }
 
     function updateProgress(){
       const done = answers.filter(v=>v!==null).length;
       const pct = Math.round((done / answers.length) * 100);
-      document.getElementById('progress').style.width = pct + '%';
+      const bar = document.getElementById('progress');
+      if (bar) bar.style.width = pct + '%';
     }
 
-    /* ==== Recos Predicta ==== */
+    /* ============ Recos Predicta (ta version dernière en date) ============ */
     function buildRecoPredicta(global, lowCats) {
       const company = (document.getElementById('company')?.value || '').trim();
       const sector  = (document.getElementById('sector')?.value || '').trim();
@@ -478,26 +479,25 @@
       const inSector = sector ? ` (${sector})` : '';
       const reco = [];
 
-      // --- Recos selon niveau global (avec ATELIER/RENCONTRE systématique) ---
-      if (global < 26) { // N1 — Analogique
+      if (global < 26) {
         reco.push(
           `🎯 **Atelier stratégique 2h (Predicta)**${who}${inSector} : état des lieux, ROI cible, plan d’action 90 jours. **Livrables** : mini-roadmap & priorisation.`,
           `⚙️ **Socle numérique minimal** : connectivité (OPC/MQTT), historisation, 1er dashboard TRS. **KPI** : couverture signaux ≥60%.`,
           `🤝 **Rencontre terrain & direction** : contraintes opérationnelles, quick wins, planning des 4–6 semaines.`
         );
-      } else if (global < 51) { // N2 — Automatisé
+      } else if (global < 51) {
         reco.push(
           `🚀 **Atelier “Quick Win” 2h (Predicta)**${who}${inSector} : cadrage d’un POC (qualité/maintenance/production). **Livrables** : fiche cas d’usage, ROI estimé, plan 6 semaines.`,
           `🏗️ **Bus de données Predicta** : connecteurs OPC/MQTT + timeseries, standard de tags. **KPI** : couverture ≥80%, latence <5s.`,
           `🤝 **Rencontre de démonstration** : retour d’expériences sur lignes similaires, jalons et risques.`
         );
-      } else if (global < 76) { // N3 — Connecté
+      } else if (global < 76) {
         reco.push(
           `🧭 **Atelier de cadrage 1h (Predicta)**${who}${inSector} : portefeuille de cas (5–8), scoring valeur/payback, séquencement 12 mois.`,
           `📡 **Scale multi-lignes** : kit de réplication (Edge + monitoring), observabilité. **KPI** : déploiement <1j/ligne, MTTR <1h.`,
           `🧠 **MLOps Starter** : versionning, ré-entrainement, détection de drift <24h.`
         );
-      } else { // N4 — Smart Factory
+      } else {
         reco.push(
           `🎛️ **Atelier optimisation 1h (Predicta)**${who}${inSector} : opportunités jumeau opérationnel / réglages assistés, protocole A/B.`,
           `🏭 **Optimisation avancée** : modèle d’optimisation contraint + expérimentation A/B. **KPI** : +2–4 pts TRS, variabilité −10–15%.`,
@@ -505,38 +505,26 @@
         );
       }
 
-      // --- Renfort sur les 2 catégories les plus faibles ---
       lowCats.forEach(c => {
-        if (c.key === 'it') {
-          reco.push(`🧱 **Données & IT (faible)** — Backbone Predicta : connecteurs (OPC/MQTT/DB), schéma commun, qualité (manquants/aberrants). **Livrables** : manifestes connecteurs, dictionnaire de données. **KPI** : qualité ≥95%.`);
-        } else if (c.key === 'qual') {
-          reco.push(`📷 **Qualité & Vision (faible)** — Pilote vision : caméra + éclairage, “golden set”, métriques FP/FN. **Livrables** : recette visuelle, guide re-label. **KPI** : F1 ≥0,90 en prod.`);
-        } else if (c.key === 'ml') {
-          reco.push(`🔬 **IA & Analytics (faible)** — MLOps Starter : tracking expériences, features store, déploiement shadow/AB. **KPI** : drift <24h, roll-back <15min.`);
-        } else if (c.key === 'prod') {
-          reco.push(`🛠️ **Production & Automatisation (faible)** — exposition signaux (OPC/MQTT), SOP changeover, alarmes écart procédé. **KPI** : temps de changement −10–20%.`);
-        } else if (c.key === 'gov') {
-          reco.push(`🎯 **Vision & Gouvernance (faible)** — PMO data/IA Predicta : RACI, comité mensuel, KPI TRS/scrap/OTD. **Livrables** : roadmap 90j/12m. **KPI** : avancement ≥80%.`);
-        } else if (c.key === 'org') {
-          reco.push(`👥 **Organisation & Compétences (faible)** — programme “ops-ready” : micro-formations, SOP/screen-tips, binôme champion. **KPI** : adoption ≥75%.`);
-        }
+        if (c.key === 'it')   reco.push(`🧱 **Données & IT (faible)** — Backbone Predicta : connecteurs (OPC/MQTT/DB), schéma commun, qualité (manquants/aberrants). **KPI** : qualité ≥95%.`);
+        if (c.key === 'qual') reco.push(`📷 **Qualité & Vision (faible)** — Pilote vision : caméra + éclairage, “golden set”, métriques FP/FN. **KPI** : F1 ≥0,90 en prod.`);
+        if (c.key === 'ml')   reco.push(`🔬 **IA & Analytics (faible)** — MLOps Starter : tracking expériences, features store, déploiement shadow/AB. **KPI** : drift <24h, roll-back <15min.`);
+        if (c.key === 'prod') reco.push(`🛠️ **Production & Automatisation (faible)** — exposition signaux (OPC/MQTT), SOP changeover, alarmes écart procédé. **KPI** : temps de changement −10–20%.`);
+        if (c.key === 'gov')  reco.push(`🎯 **Vision & Gouvernance (faible)** — PMO data/IA Predicta : RACI, comité mensuel, KPI TRS/scrap/OTD. **KPI** : avancement ≥80%.`);
+        if (c.key === 'org')  reco.push(`👥 **Organisation & Compétences (faible)** — programme “ops-ready” : micro-formations, SOP/screen-tips, binôme champion. **KPI** : adoption ≥75%.`);
       });
 
-      // --- CTA commun (toujours un atelier/rencontre à la clé) ---
       reco.push(`🤝 **Proposition Predicta** — *Diagnostic + POC (4–6 semaines)* : cadrage, socle data, cas prioritaire instrumenté, rapport d’impact & plan de déploiement. **Planifions un atelier/rencontre** pour ajuster le périmètre.`);
-
-      // Dédupliquer
       return Array.from(new Set(reco));
     }
 
-    // Compute score & recommendations
+    /* ============ Calcul & affichage résultats ============ */
     function compute(){
-      // Validation identité avant calcul
       if(!validateIdentity()) return;
 
       const unanswered = answers.reduce((acc,v,i)=> (v===null? acc.concat(i+1):acc), []);
       if(unanswered.length){
-        if(!confirm(`Vous n\'avez pas répondu à ${unanswered.length} question(s). Calculer quand même ?`)) return;
+        if(!confirm(`Vous n'avez pas répondu à ${unanswered.length} question(s). Calculer quand même ?`)) return;
       }
 
       const catMap = Object.fromEntries(CATEGORIES.map(c=>[c.key,{sum:0,count:0}]));
@@ -553,13 +541,11 @@
       });
 
       const global = Math.round(catScores.reduce((a,c)=>a+c.pct,0)/catScores.length);
-
       const level = global>=76? 'N4 — Smart Factory'
-                 : global>=51? 'N3 — Connecté'
-                 : global>=26? 'N2 — Automatisé'
-                 : 'N1 — Analogique';
+                : global>=51? 'N3 — Connecté'
+                : global>=26? 'N2 — Automatisé'
+                : 'N1 — Analogique';
 
-      // Recos Predicta
       const low = [...catScores].sort((a,b)=>a.pct-b.pct).slice(0,2);
       const reco = buildRecoPredicta(global, low);
 
@@ -579,7 +565,7 @@
         row.className = 'barrow';
         row.innerHTML = `
           <div>${c.label}</div>
-          <div class='barx'><div class='fill' style='width:${c.pct}%'></div></div>
+          <div class="barx"><div class="fill" style="width:${c.pct}%"></div></div>
         `;
         wrap.appendChild(row);
       });
@@ -592,11 +578,10 @@
         list.appendChild(li);
       });
 
-      // Scroll en haut après rendu
       requestAnimationFrame(()=>requestAnimationFrame(()=>scrollToTop(false)));
     }
 
-    // Export JSON (inclut les champs)
+    /* ============ Export JSON ============ */
     function exportJSON(){
       const meta = {
         company: document.getElementById('company')?.value?.trim() || '',
@@ -610,9 +595,10 @@
       a.href = url; a.download = 'diagnostic_maturite.json'; a.click();
       URL.revokeObjectURL(url);
     }
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNp7KNEIkxxOzSAHtt6DZKk3pysIsMs5g4HA-OvW9Ga6hDMrlQ7buz9dGYxwOOCiP0OQ/exec"; // <-- ton URL Web App
-    const SHARED_SECRET   = "predicta"; // <-- doit matcher le code Apps Script
 
+    /* ============ Envoi Apps Script ============ */
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNp7KNEIkxxOzSAHtt6DZKk3pysIsMs5g4HA-OvW9Ga6hDMrlQ7buz9dGYxwOOCiP0OQ/exec"; // /exec
+    const SHARED_SECRET   = "predicta";
 
     async function sendResults(payload){
       const meta = {
@@ -621,50 +607,31 @@
         email:   document.getElementById('email')?.value?.trim() || '',
         consent: !!document.getElementById('send_copy')?.checked
       };
-
-      const body = {
-        secret: SHARED_SECRET,
-        meta,
-        result: {
-          global: payload.global,
-          level: payload.level,
-          catScores: payload.catScores,
-          reco: payload.reco
-        }
-      };
+      const body = { secret: SHARED_SECRET, meta, result: {
+        global: payload.global, level: payload.level,
+        catScores: payload.catScores, reco: payload.reco
+      }};
 
       try{
         const res = await fetch(APPS_SCRIPT_URL, {
           method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" }, // évite le preflight CORS
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
           body: JSON.stringify(body)
         });
-
-        // La réponse peut être "opaque", on tente quand même:
-        let ok = false;
-        try {
-          const data = await res.json();
-          ok = !!data?.ok;
-          if (!ok) console.warn('Apps Script responded:', data);
-        } catch(_){
-          ok = res.ok;
-        }
-        alert(ok ? "✅ Réponses envoyées" : "⚠️ Soumission envoyée (vérifie le Sheet / ta boîte mail)");
+        let ok=false; try{ const d=await res.json(); ok=!!d?.ok; if(!ok) console.warn('Apps Script responded:', d);}catch(_){ ok=res.ok; }
+        alert(ok ? "✅ Réponses envoyées" : "⚠️ Soumission envoyée (vérifie le Sheet / mail)");
       }catch(err){
         console.error(err);
         alert("❌ Envoi impossible (réseau).");
       }
     }
 
-    // 👉 Le hook DOIT être au niveau racine (pas dans sendResults)
+    /* ============ Hook + Boutons ============ */
     const __origShowResult = showResult;
-    showResult = function(payload){
-      __origShowResult(payload);
-      sendResults(payload);
-    };
+    showResult = function(payload){ __origShowResult(payload); sendResults(payload); };
 
-    // Quick demo fill
     function quickFill(){
+      const qEl = document.getElementById('questions');
       const pattern = [2,1, 2,1, 2,2, 1,2, 1,1, 2,2];
       pattern.forEach((v,i)=>{
         answers[i]=v;
@@ -676,10 +643,9 @@
       updateProgress();
       compute();
     }
-
-    // Reset doux
     function resetAll(){
       answers.fill(null);
+      const qEl = document.getElementById('questions');
       qEl.querySelectorAll('.scale').forEach(group=>{
         group.querySelectorAll('button').forEach(btn=>btn.setAttribute('aria-pressed','false'));
       });
@@ -690,16 +656,23 @@
       scrollToTop(true);
     }
 
-    // Buttons
-    document.getElementById('compute').addEventListener('click', compute);
-    document.getElementById('reset').addEventListener('click', resetAll);
-    document.getElementById('export').addEventListener('click', exportJSON);
-    document.getElementById('print').addEventListener('click', ()=>window.print());
-    document.getElementById('print2')?.addEventListener('click', ()=>window.print());
-    document.getElementById('quickDone').addEventListener('click', quickFill);
-    document.getElementById('quickDone_footer').addEventListener('click', quickFill);
-    /* === jusqu'ici === */
-  </script>
+    /* ============ Démarrage sûr ============ */
+    document.addEventListener('DOMContentLoaded', ()=>{
+      try{
+        renderQuestions();
+        document.querySelectorAll('.reveal').forEach(n=>io.observe(n));
+        document.getElementById('compute').addEventListener('click', compute);
+        document.getElementById('reset').addEventListener('click', resetAll);
+        document.getElementById('export').addEventListener('click', exportJSON);
+        document.getElementById('print').addEventListener('click', ()=>window.print());
+        document.getElementById('print2')?.addEventListener('click', ()=>window.print());
+        document.getElementById('quickDone').addEventListener('click', quickFill);
+        document.getElementById('quickDone_footer').addEventListener('click', quickFill);
+      }catch(e){
+        console.error('💥 Erreur d’initialisation :', e);
+      }
+    });
+    </script>
 </body>
 </html>
 
