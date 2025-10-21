@@ -428,6 +428,8 @@
 
     /* ============ Rendu des questions ============ */
     const answers = Array(QUESTIONS.length).fill(null);
+    const comments = Array(QUESTIONS.length).fill('');
+
 
     function renderQuestions(){
       const qEl = document.getElementById('questions');
@@ -439,15 +441,44 @@
       QUESTIONS.forEach((q, idx)=>{
         const el = document.createElement('div');
         el.className = 'q';
+        const hasComment = (idx >= 2 && idx <= 9); // Q3 -> Q10
         el.innerHTML = `
           <h3>Q${idx+1}. ${q.text}</h3>
           <div class="scale" role="group" aria-label="Échelle de maturité">
             ${SCALE.map(s=>`<button class="btn" data-q="${idx}" data-v="${s.v}" aria-pressed="false" title="${s.label}">${s.v}</button>`).join('')}
           </div>
           <small>${SCALE.map(s=>s.label).join(' · ')}</small>
+          ${hasComment ? `
+            <div style="margin-top:10px">
+              <label for="cmt_${idx}" style="font-size:13px;opacity:.85">Commentaire / Précisions</label>
+              <textarea id="cmt_${idx}" class="input comment" data-q="${idx}" rows="2" placeholder="Ajoutez un détail, un exemple, une contrainte…">${comments[idx] || ''}</textarea>
+            </div>
+          ` : ''}
         `;
         qEl.appendChild(el);
       });
+
+      document.querySelectorAll('.reveal').forEach(n=>io.observe(n));
+
+      // notes 0..3
+      qEl.addEventListener('click', (e)=>{
+        const b = e.target.closest('button.btn');
+        if(!b) return;
+        const id = +b.dataset.q, val = +b.dataset.v;
+        answers[id] = val;
+        b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
+        b.setAttribute('aria-pressed','true');
+        updateProgress();
+      });
+
+      // commentaires libres
+      qEl.addEventListener('input', (e)=>{
+        const ta = e.target.closest('textarea.comment');
+        if(!ta) return;
+        const id = +ta.dataset.q;
+        comments[id] = (ta.value || '').slice(0, 2000); // limite douce
+      });
+    
 
       // (ré)attache l’observer reveal si besoin
       document.querySelectorAll('.reveal').forEach(n=>io.observe(n));
