@@ -548,9 +548,40 @@
       reco.push(`🤝 Proposition Predicta — Diagnostic + POC (4 à 6 semaines) : cadrage, mise en place du socle data, cas prioritaire instrumenté, rapport d’impact et plan de déploiement. -> Planifions un atelier/rencontre pour ajuster le périmètre.`);
       return Array.from(new Set(reco));
     }
+     /* ============ Appel IA (recommandations dynamiques) ============ */
+    async function fetchAIRecommendations({global, level, catScores}) {
+      const meta = {
+        company: document.getElementById('company')?.value?.trim() || '',
+        sector:  document.getElementById('sector')?.value?.trim() || '',
+        email:   document.getElementById('email')?.value?.trim() || ''
+      };
 
+      // Requête vers le Web App Apps Script
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "ai_reco",
+            secret: SHARED_SECRET,
+            meta,
+            result: { global, level, catScores }
+          })
+        });
+        const data = await res.json().catch(()=> ({}));
+        if (data?.ok && Array.isArray(data.reco) && data.reco.length) {
+          return data.reco;
+        }
+        console.warn('AI reco: réponse inattendue', data);
+      } catch (e) {
+        console.error('AI reco: erreur réseau', e);
+      }
+
+      // Fallback (en cas d’échec IA) : on garde tes recos locales
+      return buildRecoPredicta(global, [...catScores].sort((a,b)=>a.pct-b.pct).slice(0,2));
+    }
     /* ============ Calcul & affichage résultats ============ */
-    function compute(){
+    async function compute(){
       if(!validateIdentity()) return;
 
       const unanswered = answers.reduce((acc,v,i)=> (v===null? acc.concat(i+1):acc), []);
@@ -577,8 +608,8 @@
                 : global>=26? 'N2 — Automatisé'
                 : 'N1 — Analogique';
 
-      const low = [...catScores].sort((a,b)=>a.pct-b.pct).slice(0,2);
-      const reco = buildRecoPredicta(global, low);
+      // 🔮 Nouveauté : on récupère des recos IA
+      const reco = await fetchAIRecommendations({ global, level, catScores });
 
       showResult({global, level, catScores, reco});
     }
@@ -628,8 +659,9 @@
     }
 
     /* ============ Envoi Apps Script ============ */
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNp7KNEIkxxOzSAHtt6DZKk3pysIsMs5g4HA-OvW9Ga6hDMrlQ7buz9dGYxwOOCiP0OQ/exec"; // /exec
+    const APPS_SCRIPT_URL_M = "https://script.google.com/macros/s/AKfycbyNp7KNEIkxxOzSAHtt6DZKk3pysIsMs5g4HA-OvW9Ga6hDMrlQ7buz9dGYxwOOCiP0OQ/exec"; // /exec
     const SHARED_SECRET   = "predicta";
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx-YV-qWSOiJwVD_FfUg9rVUX0YF4CvbAdK8W5eWc8D2yAZlsb73j79BJGFDoF362_88g/exec";
 
     async function sendResults(payload){
       const meta = {
