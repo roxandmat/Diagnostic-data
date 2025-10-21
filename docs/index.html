@@ -607,90 +607,90 @@
     const SHARED_SECRET   = "predicta"; // <-- doit matcher le code Apps Script
 
 
-  async function sendResults(payload){
-    const meta = {
-      company: document.getElementById('company')?.value?.trim() || '',
-      sector:  document.getElementById('sector')?.value?.trim() || '',
-      email:   document.getElementById('email')?.value?.trim() || ''
-    };
+    async function sendResults(payload){
+      const meta = {
+        company: document.getElementById('company')?.value?.trim() || '',
+        sector:  document.getElementById('sector')?.value?.trim() || '',
+        email:   document.getElementById('email')?.value?.trim() || ''
+      };
 
-    const body = {
-      secret: SHARED_SECRET,
-      meta,
-      result: {
-        global: payload.global,
-        level: payload.level,
-        catScores: payload.catScores,
-        reco: payload.reco
+      const body = {
+        secret: SHARED_SECRET,
+        meta,
+        result: {
+          global: payload.global,
+          level: payload.level,
+          catScores: payload.catScores,
+          reco: payload.reco
+        }
+      };
+
+      try{
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" }, // évite le preflight CORS
+          body: JSON.stringify(body)
+        });
+
+        // La réponse peut être "opaque", on tente quand même:
+        let ok = false;
+        try {
+          const data = await res.json();
+          ok = !!data?.ok;
+          if (!ok) console.warn('Apps Script responded:', data);
+        } catch(_){
+          ok = res.ok;
+        }
+        alert(ok ? "✅ Réponses envoyées" : "⚠️ Soumission envoyée (vérifie le Sheet / ta boîte mail)");
+      }catch(err){
+        console.error(err);
+        alert("❌ Envoi impossible (réseau).");
       }
-    };
-
-    try{
-      const res = await fetch(APPS_SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" }, // évite le preflight CORS
-        body: JSON.stringify(body)
-      });
-
-      // La réponse peut être "opaque", on tente quand même:
-      let ok = false;
-      try {
-        const data = await res.json();
-        ok = !!data?.ok;
-        if (!ok) console.warn('Apps Script responded:', data);
-      } catch(_){
-        ok = res.ok;
-      }
-      alert(ok ? "✅ Réponses envoyées" : "⚠️ Soumission envoyée (vérifie le Sheet / ta boîte mail)");
-    }catch(err){
-      console.error(err);
-      alert("❌ Envoi impossible (réseau).");
     }
-  }
 
-  // 👉 Le hook DOIT être au niveau racine (pas dans sendResults)
-  const __origShowResult = showResult;
-  showResult = function(payload){
-    __origShowResult(payload);
-    sendResults(payload);
-  };
+    // 👉 Le hook DOIT être au niveau racine (pas dans sendResults)
+    const __origShowResult = showResult;
+    showResult = function(payload){
+      __origShowResult(payload);
+      sendResults(payload);
+    };
 
-  // Quick demo fill
-  function quickFill(){
-    const pattern = [2,1, 2,1, 2,2, 1,2, 1,1, 2,2];
-    pattern.forEach((v,i)=>{
-      answers[i]=v;
-      const group = qEl.children[i].querySelector('.scale');
-      group.querySelectorAll('button').forEach(btn=>{
-        btn.setAttribute('aria-pressed', btn.dataset.v == v ? 'true':'false');
+    // Quick demo fill
+    function quickFill(){
+      const pattern = [2,1, 2,1, 2,2, 1,2, 1,1, 2,2];
+      pattern.forEach((v,i)=>{
+        answers[i]=v;
+        const group = qEl.children[i].querySelector('.scale');
+        group.querySelectorAll('button').forEach(btn=>{
+          btn.setAttribute('aria-pressed', btn.dataset.v == v ? 'true':'false');
+        });
       });
-    });
-    updateProgress();
-    compute();
-  }
+      updateProgress();
+      compute();
+    }
 
-  // Reset doux
-  function resetAll(){
-    answers.fill(null);
-    qEl.querySelectorAll('.scale').forEach(group=>{
-      group.querySelectorAll('button').forEach(btn=>btn.setAttribute('aria-pressed','false'));
-    });
-    document.getElementById('progress').style.width = '0%';
-    document.getElementById('result').style.display = 'none';
-    ['company','sector','email'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
-    clearErrors();
-    scrollToTop(true);
-  }
+    // Reset doux
+    function resetAll(){
+      answers.fill(null);
+      qEl.querySelectorAll('.scale').forEach(group=>{
+        group.querySelectorAll('button').forEach(btn=>btn.setAttribute('aria-pressed','false'));
+      });
+      document.getElementById('progress').style.width = '0%';
+      document.getElementById('result').style.display = 'none';
+      ['company','sector','email'].forEach(id => { const el = document.getElementById(id); if(el) el.value = ''; });
+      clearErrors();
+      scrollToTop(true);
+    }
 
-  // Buttons
-  document.getElementById('compute').addEventListener('click', compute);
-  document.getElementById('reset').addEventListener('click', resetAll);
-  document.getElementById('export').addEventListener('click', exportJSON);
-  document.getElementById('print').addEventListener('click', ()=>window.print());
-  document.getElementById('print2')?.addEventListener('click', ()=>window.print());
-  document.getElementById('quickDone').addEventListener('click', quickFill);
-  document.getElementById('quickDone_footer').addEventListener('click', quickFill);
-  /* === jusqu'ici === */
+    // Buttons
+    document.getElementById('compute').addEventListener('click', compute);
+    document.getElementById('reset').addEventListener('click', resetAll);
+    document.getElementById('export').addEventListener('click', exportJSON);
+    document.getElementById('print').addEventListener('click', ()=>window.print());
+    document.getElementById('print2')?.addEventListener('click', ()=>window.print());
+    document.getElementById('quickDone').addEventListener('click', quickFill);
+    document.getElementById('quickDone_footer').addEventListener('click', quickFill);
+    /* === jusqu'ici === */
   </script>
 </body>
 </html>
