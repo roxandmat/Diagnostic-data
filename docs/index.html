@@ -478,21 +478,6 @@
         const id = +ta.dataset.q;
         comments[id] = (ta.value || '').slice(0, 2000); // limite douce
       });
-    
-
-      // (ré)attache l’observer reveal si besoin
-      document.querySelectorAll('.reveal').forEach(n=>io.observe(n));
-
-      // interactions
-      qEl.addEventListener('click', (e)=>{
-        const b = e.target.closest('button.btn');
-        if(!b) return;
-        const id = +b.dataset.q, val = +b.dataset.v;
-        answers[id] = val;
-        b.parentElement.querySelectorAll('button').forEach(x=>x.setAttribute('aria-pressed','false'));
-        b.setAttribute('aria-pressed','true');
-        updateProgress();
-      });
     }
 
     function updateProgress(){
