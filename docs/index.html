@@ -478,72 +478,56 @@
       const inSector = sector ? ` (${sector})` : '';
       const reco = [];
 
-      // --- Trame générale selon le niveau ---
+      // --- Recos selon niveau global (avec ATELIER/RENCONTRE systématique) ---
       if (global < 26) { // N1 — Analogique
         reco.push(
-          // 0–30 jours
-          `🚀 **Sprint 0–30 jours**${who}${inSector} — *Cadrage Predicta* : ateliers dirigeants & terrain (2×2h), cartographie data/IT/OT, sélection d’1 cas d’usage “quick win”. **Livrables** : cible 90 jours, RACI, backlog priorisé. **KPI** : périmètre validé, budget & ROI cible.`,
-          // 30–60 jours
-          `🏗️ **30–60 jours** — *Socle de données minimal* : passerelle Edge + connecteurs (OPC-UA/MQTT/DB), historisation (timeseries), tableau de bord TRS. **Livrables** : connecteurs prêts, schéma données, dashboard v1. **KPI** : ≥95% dispo data, latence <5s.`,
-          // 60–90 jours
-          `🧪 **60–90 jours** — *POC cadré avec Predicta* : 1 ligne > 1 indicateur métier (scrap, cadence, dérives). **Livrables** : protocole test, rapport d’impact, plan run. **KPI** : −5–10% scrap OU +3–5% TRS.`
+          `🎯 **Atelier stratégique 2h (Predicta)**${who}${inSector} : état des lieux, ROI cible, plan d’action 90 jours. **Livrables** : mini-roadmap & priorisation.`,
+          `⚙️ **Socle numérique minimal** : connectivité (OPC/MQTT), historisation, 1er dashboard TRS. **KPI** : couverture signaux ≥60%.`,
+          `🤝 **Rencontre terrain & direction** : contraintes opérationnelles, quick wins, planning des 4–6 semaines.`
         );
       } else if (global < 51) { // N2 — Automatisé
         reco.push(
-          `⚙️ **90 jours d’industrialisation** — *Predicta* met en place bus données unifié (site), standard de tags & conventions, et tableau de bord “opération” (poste/ligne). **Livrables** : modèle de données, kits de déploiement, SOP opérateurs. **KPI** : couverture signaux ≥80%, temps d’accès <2s.`,
-          `📦 **Cas d’usage prioritaire** — Qualité en ligne (vision/capteurs) ou maintenance conditionnelle. **Livrables** : dataset labellisé, métriques F1/AUC, recette sur lot témoin. **KPI** : FP/FN <5%, temps cycle inchangé.`,
-          `🔁 **Gouvernance** — comité mensuel avec Predicta (KPI, risques, valeur). **Livrables** : tableau de bord ROI, feuille de route Q+1/Q+2.`
+          `🚀 **Atelier “Quick Win” 2h (Predicta)**${who}${inSector} : cadrage d’un POC (qualité/maintenance/production). **Livrables** : fiche cas d’usage, ROI estimé, plan 6 semaines.`,
+          `🏗️ **Bus de données Predicta** : connecteurs OPC/MQTT + timeseries, standard de tags. **KPI** : couverture ≥80%, latence <5s.`,
+          `🤝 **Rencontre de démonstration** : retour d’expériences sur lignes similaires, jalons et risques.`
         );
       } else if (global < 76) { // N3 — Connecté
         reco.push(
-          `📡 **Scale multi-lignes** — *Kit de réplication Predicta* (Edge + monitoring + observabilité). **Livrables** : template infra, Helm/Compose, playbook déploiement. **KPI** : temps déploiement <1j/ligne, MTTR <1h.`,
-          `🧠 **MLOps** — versionning modèles/datasets, ré-entrainement planifié, traçabilité (features store). **Livrables** : pipeline CI/CD ML, carte de risques drifts. **KPI** : >95% traçabilité, drift détecté <24h.`,
-          `💸 **Valeur business** — cadrage portefeuille (5–8 CU) avec scoring EBITDA/payback. **Livrables** : business case, sequencing 12 mois. **KPI** : payback <9–12 mois.`
+          `🧭 **Atelier de cadrage 1h (Predicta)**${who}${inSector} : portefeuille de cas (5–8), scoring valeur/payback, séquencement 12 mois.`,
+          `📡 **Scale multi-lignes** : kit de réplication (Edge + monitoring), observabilité. **KPI** : déploiement <1j/ligne, MTTR <1h.`,
+          `🧠 **MLOps Starter** : versionning, ré-entrainement, détection de drift <24h.`
         );
       } else { // N4 — Smart Factory
         reco.push(
-          `🏭 **Optimisation avancée** — jumeau opérationnel léger (process mining + contraintes) pour réglages auto assistés. **Livrables** : modèle d’optimisation, protocole A/B. **KPI** : +2–4 pts TRS, variabilité −10–15%.`,
-          `🌍 **Déploiement multi-sites** — gouvernance data/IA groupe (référentiels, qualité, sécurité). **Livrables** : standard groupe, centre d’excellence. **KPI** : réutilisation >60%, incidents sécu = 0.`,
-          `🔐 **Conformité & sécurité** — revue IT/OT, durcissement Edge, journalisation. **Livrables** : check-list conformité, plan d’actions. **KPI** : 100% exigences minimales.`
+          `🎛️ **Atelier optimisation 1h (Predicta)**${who}${inSector} : opportunités jumeau opérationnel / réglages assistés, protocole A/B.`,
+          `🏭 **Optimisation avancée** : modèle d’optimisation contraint + expérimentation A/B. **KPI** : +2–4 pts TRS, variabilité −10–15%.`,
+          `🌍 **Gouvernance groupe** : standard data/IA, centre d’excellence, sécurité IT/OT. **KPI** : réutilisation >60%.`
         );
       }
 
-      // --- Ciblage renforcé sur les 2 catégories les plus faibles ---
+      // --- Renfort sur les 2 catégories les plus faibles ---
       lowCats.forEach(c => {
         if (c.key === 'it') {
-          reco.push(
-            `🧱 **Données & IT (faible)** — *Predicta Data Backbone* : connecteurs (OPC-UA/MQTT/DB), schéma commun, historisation et qualité (manquants/valeurs aberrantes). **Livrables** : manifestes connecteurs, dictionnaire de données. **KPI** : couverture ≥80%, qualité ≥95%.`
-          );
+          reco.push(`🧱 **Données & IT (faible)** — Backbone Predicta : connecteurs (OPC/MQTT/DB), schéma commun, qualité (manquants/aberrants). **Livrables** : manifestes connecteurs, dictionnaire de données. **KPI** : qualité ≥95%.`);
         } else if (c.key === 'qual') {
-          reco.push(
-            `📷 **Qualité & Vision (faible)** — *Ligne pilote vision* : choix caméra & éclairage, pipeline d’inférence, jeu “golden set”, métriques exploitées (FP/FN). **Livrables** : recette visuelle, guide re-label. **KPI** : F1 ≥0,9 en prod.`
-          );
+          reco.push(`📷 **Qualité & Vision (faible)** — Pilote vision : caméra + éclairage, “golden set”, métriques FP/FN. **Livrables** : recette visuelle, guide re-label. **KPI** : F1 ≥0,90 en prod.`);
         } else if (c.key === 'ml') {
-          reco.push(
-            `🔬 **IA & Analytics (faible)** — *Predicta MLOps Starter* : tracking expériences, features store, déploiement contrôlé (shadow/AB). **Livrables** : templates entraînement/inférence. **KPI** : drift détecté <24h, roll-back <15min.`
-          );
+          reco.push(`🔬 **IA & Analytics (faible)** — MLOps Starter : tracking expériences, features store, déploiement shadow/AB. **KPI** : drift <24h, roll-back <15min.`);
         } else if (c.key === 'prod') {
-          reco.push(
-            `🛠️ **Production & Automatisation (faible)** — exposition signaux standard (OPC-UA/MQTT), SOP changeover, alarmes écart procédé. **Livrables** : mapping PLC→tags, dashboard TRS opérateur. **KPI** : temps de changement −10–20%.`
-          );
+          reco.push(`🛠️ **Production & Automatisation (faible)** — exposition signaux (OPC/MQTT), SOP changeover, alarmes écart procédé. **KPI** : temps de changement −10–20%.`);
         } else if (c.key === 'gov') {
-          reco.push(
-            `🎯 **Vision & Gouvernance (faible)** — PMO data/IA avec Predicta : RACI, comité mensuel, KPI (TRS, scrap, OTD), gestion risques & valeur. **Livrables** : roadmap 90j/12m, rapport mensuel. **KPI** : décisions <2 semaines, avancement ≥80%.`
-          );
+          reco.push(`🎯 **Vision & Gouvernance (faible)** — PMO data/IA Predicta : RACI, comité mensuel, KPI TRS/scrap/OTD. **Livrables** : roadmap 90j/12m. **KPI** : avancement ≥80%.`);
         } else if (c.key === 'org') {
-          reco.push(
-            `👥 **Organisation & Compétences (faible)** — programme “ops-ready” : micro-formations ciblées (qualité, maintenance), SOP/screen-tips, binôme champion. **Livrables** : kit formation + quiz. **KPI** : adoption ≥75%, incidents opérateur −30%.`
-          );
+          reco.push(`👥 **Organisation & Compétences (faible)** — programme “ops-ready” : micro-formations, SOP/screen-tips, binôme champion. **KPI** : adoption ≥75%.`);
         }
       });
 
-      // --- CTA explicite Predicta ---
-      reco.push(
-        `🤝 **Proposition Predicta** — *Diagnostic + POC en 6 semaines* : 1) cadrage chiffré, 2) socle data + connecteurs, 3) cas d’usage prioritaire instrumenté, 4) rapport d’impact & plan de déploiement. **Séance 45 min** pour caler le périmètre : contactez-nous.`
-      );
+      // --- CTA commun (toujours un atelier/rencontre à la clé) ---
+      reco.push(`🤝 **Proposition Predicta** — *Diagnostic + POC (4–6 semaines)* : cadrage, socle data, cas prioritaire instrumenté, rapport d’impact & plan de déploiement. **Planifions un atelier/rencontre** pour ajuster le périmètre.`);
 
-      // Déduplique et renvoie
+      // Dédupliquer
       return Array.from(new Set(reco));
+}
     }
 
     // Compute score & recommendations
