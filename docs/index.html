@@ -603,7 +603,58 @@
       a.href = url; a.download = 'diagnostic_maturite.json'; a.click();
       URL.revokeObjectURL(url);
     }
-    
+    const APPS_SCRIPT_URL = "https://script.google.com/home/projects/1C_rVRpS33Y6op3YuNflynXzTbOj0Ux3jTsTKxLJ62cRNk5eym27N6JWk/edit"; // <-- ton URL Web App
+    const SHARED_SECRET   = "predicta"; // <-- doit matcher le code Apps Script
+
+
+    async function sendResults(payload){
+      const meta = {
+        company: document.getElementById('company')?.value?.trim() || '',
+        sector:  document.getElementById('sector')?.value?.trim() || '',
+        email:   document.getElementById('email')?.value?.trim() || ''
+      };
+
+      // On envoie meta + result + secret
+      const body = {
+        secret: SHARED_SECRET,
+        meta,
+        result: {
+          global: payload.global,
+          level: payload.level,
+          catScores: payload.catScores,
+          reco: payload.reco
+        }
+      };
+
+      try{
+        // Content-Type: text/plain => pas de preflight OPTIONS, donc pas de CORS bloquant sur Apps Script
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(body)
+        });
+
+        // La réponse est "opaque" sur certaines configs; on tente quand même de lire le JSON
+        let ok = false;
+        try {
+          const data = await res.json();
+          ok = !!data?.ok;
+          if (!ok) console.warn('Apps Script responded:', data);
+        } catch(_) {
+          // Pas grave si on ne peut pas parser (mode opaque)
+          ok = res.ok; 
+        }
+        alert(ok ? "✅ Réponses envoyées" : "⚠️ Soumission envoyée (vérifie le Sheet / ta boîte mail)");
+      }catch(err){
+        console.error(err);
+        alert("❌ Envoi impossible (réseau).");
+      }
+
+      const __origShowResult = showResult;
+      showResult = function(payload){
+        __origShowResult(payload);
+        sendResults(payload);
+    }
     // Quick demo fill
     function quickFill(){
       const pattern = [2,1, 2,1, 2,2, 1,2, 1,1, 2,2];
