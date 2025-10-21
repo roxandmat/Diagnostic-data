@@ -481,38 +481,37 @@
 
       if (global < 26) {
         reco.push(
-          `🎯 1. Atelier stratégique 2h : état des lieux, ROI cible et plan d’action sur 90 jours. Livrables : mini-roadmap et priorisation.`,
-          `⚙️ 2. Socle numérique minimal : Définition et mise en place de la connectivité (OPC/MQTT), historisation des données et premier dashboard TRS. KPI : couverture des signaux ≥ 60 %.`,
-          `🤝 3. Rencontre terrain et direction : échanges sur les contraintes opérationnelles, les cas d'usages critiques et la planification sur 4 à 6 semaines.`
-          `Proposition : Diagnostic + POC (4 à 6 semaines) : cadrage, mise en place du socle data, cas prioritaire instrumenté, rapport d’impact et plan de déploiement.Planifions un atelier ou une rencontre pour ajuster le périmètre.`
+          `🎯 Atelier stratégique 2h : état des lieux, ROI cible et plan d’action sur 90 jours. Livrables : mini-roadmap et priorisation.`,
+          `⚙️ Socle numérique minimal : Définition et mise en place de la connectivité (OPC/MQTT), historisation des données et premier dashboard TRS. KPI : couverture des signaux ≥ 60 %.`,
+          `🤝 Rencontre terrain et direction : échanges sur les contraintes opérationnelles, les cas d'usages critiques et la planification sur 4 à 6 semaines.`
         );
       } else if (global < 51) {
         reco.push(
-          `🚀 1. Atelier opérationnel 2h : cadrage d’un POC (qualité, maintenance ou production). Livrables : fiche cas d’usage, ROI estimé et plan sur 6 semaines.`,
-          `🏗️ 2. Bus de données : connecteurs OPC/MQTT et timeseries, standardisation des tags. KPI : couverture ≥ 80 %`,
-          `🤝 3. Rencontre de démonstration : retours d’expérience sur des lignes similaires, présentation des jalons et des risques.`
+          `🚀 Atelier opérationnel 2h : cadrage d’un POC (qualité, maintenance ou production). Livrables : fiche cas d’usage, ROI estimé et plan sur 6 semaines.`,
+          `🏗️ Bus de données : connecteurs OPC/MQTT et timeseries, standardisation des tags. KPI : couverture ≥ 80 %`,
+          `🤝 Rencontre de démonstration : retours d’expérience sur des lignes similaires, présentation des jalons et des risques.`
         );
       } else if (global < 76) {
         reco.push(
-          `🧭 1. Atelier de cadrage 1h : identification d’un portefeuille de cas d'usages critiques, scoring de la valeur et du payback, planification sur 12 mois.`,
-          `📡 2. Passage à l'échelle multi-lignes : déploiement du kit de réplication Edge et monitoring, mise en place de l’observabilité. KPI : déploiement < 1 jour par ligne, MTTR < 1 heure.`,
-          `🧠 3. MLOps Starter : versionnement, ré-entrainement et détection automatique de défaut ou panne en moins de 24 heures.`
+          `🧭 Atelier de cadrage 1h : identification d’un portefeuille de cas d'usages critiques, scoring de la valeur et du payback, planification sur 12 mois.`,
+          `📡 Passage à l'échelle multi-lignes : déploiement du kit de réplication Edge et monitoring, mise en place de l’observabilité. KPI : déploiement < 1 jour par ligne, MTTR < 1 heure.`,
+          `🧠 MLOps Starter : versionnement, ré-entrainement et détection automatique de défaut ou panne en moins de 24 heures.`
         );
       } else {
         reco.push(
-          `🎛️ 1. Atelier d’optimisation 1h (Predicta) : exploration des opportunités de jumeau opérationnel et de réglages assistés, avec protocole A/B.`,
-          `🏭 2. Optimisation avancée : mise en place d’un modèle d’optimisation contraint et d’expérimentations A/B. KPI : +2 à 4 points de TRS, variabilité réduite de 10 à 15 %.`,
-          `🌍 3. Gouvernance groupe : définition d’un standard data/IA, création d’un centre d’excellence et renforcement de la sécurité IT/OT. KPI : réutilisation supérieure à 60 %.`
+          `🎛️ Atelier d’optimisation 1h (Predicta) : exploration des opportunités de jumeau opérationnel et de réglages assistés, avec protocole A/B.`,
+          `🏭 Optimisation avancée : mise en place d’un modèle d’optimisation contraint et d’expérimentations A/B. KPI : +2 à 4 points de TRS, variabilité réduite de 10 à 15 %.`,
+          `🌍 Gouvernance groupe : définition d’un standard data/IA, création d’un centre d’excellence et renforcement de la sécurité IT/OT. KPI : réutilisation supérieure à 60 %.`
         );
       }
 
       lowCats.forEach(c => {
-        if (c.key === 'it')   reco.push(`🧱 **Données & IT (faible)** — Backbone Predicta : connecteurs (OPC/MQTT/DB), schéma commun, qualité (manquants/aberrants). **KPI** : qualité ≥95%.`);
-        if (c.key === 'qual') reco.push(`📷 **Qualité & Vision (faible)** — Pilote vision : caméra + éclairage, “golden set”, métriques FP/FN. **KPI** : F1 ≥0,90 en prod.`);
-        if (c.key === 'ml')   reco.push(`🔬 **IA & Analytics (faible)** — MLOps Starter : tracking expériences, features store, déploiement shadow/AB. **KPI** : drift <24h, roll-back <15min.`);
-        if (c.key === 'prod') reco.push(`🛠️ **Production & Automatisation (faible)** — exposition signaux (OPC/MQTT), SOP changeover, alarmes écart procédé. **KPI** : temps de changement −10–20%.`);
-        if (c.key === 'gov')  reco.push(`🎯 **Vision & Gouvernance (faible)** — PMO data/IA Predicta : RACI, comité mensuel, KPI TRS/scrap/OTD. **KPI** : avancement ≥80%.`);
-        if (c.key === 'org')  reco.push(`👥 **Organisation & Compétences (faible)** — programme “ops-ready” : micro-formations, SOP/screen-tips, binôme champion. **KPI** : adoption ≥75%.`);
+        if (c.key === 'it')   reco.push(`🧱 Données & IT : Backbone Predicta avec connecteurs (OPC/MQTT/DB), schéma commun et contrôle qualité des données (valeurs manquantes, aberrantes).`);
+        if (c.key === 'qual') reco.push(`📷 Qualité & Vision : pilote vision (caméra, éclairage, jeu de référence “golden set”), suivi des métriques FP/FN et guide de re-labellisation. KPI : F1 ≥ 0,90 en production.`);
+        if (c.key === 'ml')   reco.push(`🔬 IA & Analytics : MLOps Starter incluant le suivi d’expériences, la gestion des features et le déploiement en mode shadow`);
+        if (c.key === 'prod') reco.push(`🛠️ IA & Analytics : MLOps Starter incluant le suivi d’expériences, la gestion des features et le déploiement en mode shadowProduction & Automatisation : exposition des signaux (OPC/MQTT), standardisation des SOP de changement de série, et gestion des alarmes procédés.`);
+        if (c.key === 'gov')  reco.push(`🎯 Production & Automatisation : exposition des signaux (OPC/MQTT), standardisation des SOP de changement de série, et gestion des alarmes procédés.`);
+        if (c.key === 'org')  reco.push(`👥 Organisation & Compétences : programme “ops-ready” avec micro-formations, SOP simplifiés à l’écran et binôme champion.`);
       });
 
       reco.push(`🤝 **Proposition Predicta** — *Diagnostic + POC (4–6 semaines)* : cadrage, socle data, cas prioritaire instrumenté, rapport d’impact & plan de déploiement. **Planifions un atelier/rencontre** pour ajuster le périmètre.`);
