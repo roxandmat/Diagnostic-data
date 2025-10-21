@@ -254,6 +254,14 @@
             <span class="help">Facultative. Si renseignée, elle doit être valide.</span>
             <span class="error-msg" id="emailError"></span>
           </div>
+          <!-- Consentement pour l'email de confirmation -->
+          <div class="field" style="grid-column: 1 / -1;">
+            <label style="display:flex;gap:8px;align-items:center">
+              <input type="checkbox" id="send_copy">
+              M’envoyer une copie de mes réponses par email
+            </label>
+            <small class="help">En cochant, vous recevrez un récapitulatif à l’adresse indiquée.</small>
+          </div>
         </div>
 
         <div class="divider"></div>
@@ -603,7 +611,7 @@
       a.href = url; a.download = 'diagnostic_maturite.json'; a.click();
       URL.revokeObjectURL(url);
     }
-    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzPNCAc3qP0hqyhJ80GhSzRzSYGKWMP6kJhPcw8xDYr0wZBWFbXHRrpyYGJuriouk6_XQ/exec"; // <-- ton URL Web App
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyNp7KNEIkxxOzSAHtt6DZKk3pysIsMs5g4HA-OvW9Ga6hDMrlQ7buz9dGYxwOOCiP0OQ/exec"; // <-- ton URL Web App
     const SHARED_SECRET   = "predicta"; // <-- doit matcher le code Apps Script
 
 
@@ -611,7 +619,8 @@
       const meta = {
         company: document.getElementById('company')?.value?.trim() || '',
         sector:  document.getElementById('sector')?.value?.trim() || '',
-        email:   document.getElementById('email')?.value?.trim() || ''
+        email:   document.getElementById('email')?.value?.trim() || '',
+        consent: !!document.getElementById('send_copy')?.checked
       };
 
       const body = {
